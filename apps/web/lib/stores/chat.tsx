@@ -67,11 +67,12 @@ export const useMessageStore = create< MessageState, [["zustand/immer", never]] 
         if(index === undefined) { 
             index = UInt64.from(0);
         }
+
         console.log(index.toBigInt());
         
         // 1부터 index까지의 메시지를 가져온다.
         let message_list = [];
-        for (let i = 1; i <= index.toBigInt(); i++) {
+        for (let i = 1; i <= index?.toBigInt(); i++) {
           const message = await client.query.runtime.Chating.message_list.get(UInt64.from(i));
 
             if(message === undefined) {

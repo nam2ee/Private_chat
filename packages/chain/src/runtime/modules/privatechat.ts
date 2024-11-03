@@ -19,7 +19,7 @@ export class Message extends Struct({
 
    
 @runtimeModule()
-export class Chating extends RuntimeModule<Record<string, never>> {
+export class Private_chat extends RuntimeModule<Record<string, never>> {
     // public constructor(@inject("Balances") public balances: Balances) {super(); }
     // Record<string, never> is an empty object type.
     // there is no need to the type of the config object.   
@@ -39,7 +39,9 @@ export class Chating extends RuntimeModule<Record<string, never>> {
           const index_p =  (await this.index.get()).orElse(UInt64.from(1)); // get the current index from the state
 
           await this.index.set(index_p.add(UInt64.from(1))) // increase the counter
+
           assert(index_p.lessThanOrEqual(UInt64.from(1000)), "Message list is full"); // check if the message list is full
+
           await this.message_list.set(index_p.add(UInt64.from(1)), message); // set the message
 
     }
@@ -53,6 +55,12 @@ export class Chating extends RuntimeModule<Record<string, never>> {
           });
         const message = (await this.message_list.get(index)).orElse(dummy);
         return message;
+    }
+
+    @runtimeMethod()
+    async increaseCounter() {
+        const index = (await this.index.get()).orElse(UInt64.from(0)); // get the current index from the state
+        await this.index.set(index.add(UInt64.from(1))); // increase the index by 1
     }
 
     public async getCounter()  {
